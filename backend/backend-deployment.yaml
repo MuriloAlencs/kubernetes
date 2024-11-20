@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: muriloalencs/backend
+          ports:
+            - containerPort: 5000
+          command: ["python", "-m", "flask", "run", "--host=0.0.0.0"]
+          env:
+            - name: FLASK_APP
+              value: "run.py"
+            - name: FLASK_DB_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: FLASK_DB_TYPE
+            - name: FLASK_DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: FLASK_DB_USER
+            - name: FLASK_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: FLASK_DB_NAME
+            - name: FLASK_DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: FLASK_DB_PASSWORD
+            - name: FLASK_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: FLASK_DB_HOST
+            - name: FLASK_DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: FLASK_DB_PORT
+          resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 200m
+                memory: 256Mi
